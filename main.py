@@ -6,9 +6,6 @@ from pytube import YouTube
 import moviepy.editor as mymovie
 
 Foldername = ""
-videofolder = ""
-audiofolder = ""
-
 
 def openloc():
     global Foldername
@@ -17,7 +14,6 @@ def openloc():
         locationnerror.config(text=Foldername, fg="green")
     else:
         locationnerror.config(text="Choose Directory", fg="red")
-
 
 def Download_vid():
     choice = ytdchoices.get()
@@ -36,8 +32,9 @@ def Download_vid():
                 get = messagebox.askyesno("Do You Want To Download", f"File Size: {round(size * 0.000001, 2)} MB")
                 if get:
                     video.download(Foldername, filenamee + ".mp4")
+                    ytderror.config(text="Download Completed", fg="green")
             except Exception as e:
-                messagebox.showerror("Check Your Internet Connection!")
+                messagebox.showerror("Error", "Check Your Internet Connection!")
 
         elif choice == choices[1]:
             filenamee = slugify(yt.title)
@@ -45,16 +42,20 @@ def Download_vid():
             clip = mymovie.AudioFileClip(os.path.join(Foldername, filenamee + ".webm"))
             clip.write_audiofile(os.path.join(Foldername, filenamee + ".mp3"))
             clip.close()
-            os.remove(audio)
+            os.remove(os.path.join(Foldername, filenamee + ".webm"))
+            ytderror.config(text="Download Completed", fg="green")
 
         elif choice == choices[2]:
             filenamee = slugify(yt.title)
             videofolder = os.path.join(Foldername, filenamee + ".mp4")
             audiofolder = os.path.join(Foldername, filenamee + ".mp3")
 
+            yt.streams.filter(adaptive=True).first().download(Foldername, filenamee + ".mp4")
+            yt.streams.filter(only_audio=True).last().download(Foldername, filenamee + ".mp3")
+
             inputvideo = videofolder
             inputaudio = audiofolder
-            outputvideo = os.path.join(Foldername, filenamee + "last" + ".mp4")
+            outputvideo = os.path.join(Foldername, filenamee + "_final" + ".mp4")
 
             videoclip = mymovie.VideoFileClip(inputvideo)
             audioclip = mymovie.AudioFileClip(inputaudio)
@@ -63,12 +64,10 @@ def Download_vid():
 
             os.remove(videofolder)
             os.remove(audiofolder)
+            ytderror.config(text="Download Completed", fg="green")
 
-        else:
-            ytderror.config(text="Paste the link again", fg="red")
-
-    ytderror.config(text="Download Completed", fg="green")
-
+    else:
+        ytderror.config(text="Paste the link again", fg="red")
 
 root = Tk()
 root.title("Youtube Video and Sound Converter")
@@ -82,16 +81,16 @@ ytdentryvar = StringVar()
 ytdentry = Entry(root, width=50, textvariable=ytdentryvar)
 ytdentry.grid()
 
-ytderror = Label(root, text="Error", fg="red", font=("bahnschrift semilight", 13))
+ytderror = Label(root, text="", fg="red", font=("bahnschrift semilight", 13))
 ytderror.grid()
 
 savelabel = Label(root, text="Save the Video", font=("bahnschrift semilight", 15))
 savelabel.grid()
 
-saveEntry = Button(root, width=13, bg="red", fg="white", text="Choose Directory:", command=openloc)
+saveEntry = Button(root, width=13, bg="red", fg="white", text="Choose Directory", command=openloc)
 saveEntry.grid()
 
-locationnerror = Label(root, text="Directory causes Error", fg="red", font=("bahnschrift semilight", 13))
+locationnerror = Label(root, text="", fg="red", font=("bahnschrift semilight", 13))
 locationnerror.grid()
 
 choices = ["1080p", "Audio", "Combine"]
