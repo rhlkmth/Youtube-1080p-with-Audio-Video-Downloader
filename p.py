@@ -1,6 +1,6 @@
 
 import os
-from moviepy import *
+from moviepy.editor import *
 from tkinter import * 
 from tkinter import ttk,messagebox
 from slugify import slugify
@@ -157,4 +157,3 @@ downloadbtn.grid()
 root.mainloop()
 
 #01000001 01110010 01100100 01100001 00100000 01000001 01110010 01110011 01101100 01100001 01101110
-
