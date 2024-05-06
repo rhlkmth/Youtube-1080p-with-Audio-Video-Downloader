@@ -1,6 +1,6 @@
 
 import os
-from moviepy.editor import *
+from moviepy import *
 from tkinter import * 
 from tkinter import ttk,messagebox
 from slugify import slugify
